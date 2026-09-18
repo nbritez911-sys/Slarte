@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Slarte</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <section id="authView" class="auth-view">
+      <div class="auth-card">
+        <div class="brand">Slarte</div>
+        <p class="auth-subtitle">Private conversations, built around your username.</p>
+
+        <div class="auth-tabs">
+          <button class="tab active" data-auth-tab="login">Sign in</button>
+          <button class="tab" data-auth-tab="register">Create account</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>Username<input name="username" autocomplete="username" placeholder="@username" required></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+          <button class="primary-button" type="submit">Sign in</button>
+        </form>
+
+        <form id="registerForm" class="auth-form hidden">
+          <label>Username<input name="username" autocomplete="username" placeholder="@username" required></label>
+          <label>Display name<input name="name" autocomplete="name" required></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+          <label>Profile photo URL <span class="optional">(optional)</span><input name="avatar_url" type="url" placeholder="https://..."></label>
+          <label>About you <span class="optional">(optional)</span><textarea name="description" maxlength="300" rows="3"></textarea></label>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+        <p id="authError" class="form-error"></p>
+      </div>
+    </section>
+
+    <section id="chatView" class="chat-view hidden">
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <div class="profile-mini">
+            <div id="meAvatar" class="avatar"></div>
+            <div>
+              <strong id="meName">Slarte</strong>
+              <span id="meUsername">@username</span>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button id="newChatButton" class="icon-button" aria-label="New conversation">+</button>
+            <button id="logoutButton" class="icon-button" aria-label="Sign out">↗</button>
+          </div>
+        </header>
+
+        <div class="search-wrap">
+          <input id="userSearch" placeholder="Search people by username">
+        </div>
+
+        <div id="searchResults" class="search-results hidden"></div>
+
+        <div class="sidebar-section">
+          <div class="section-heading">
+            <span>Conversations</span>
+            <button id="newGroupButton" class="text-button">New group</button>
+          </div>
+          <div id="conversationList" class="conversation-list"></div>
+        </div>
+      </aside>
+
+      <main class="conversation">
+        <div id="emptyConversation" class="empty-state">
+          <div class="empty-logo">S</div>
+          <h1>Your messages</h1>
+          <p>Select a conversation or search for a user to start chatting.</p>
+        </div>
+
+        <section id="activeConversation" class="active-conversation hidden">
+          <header class="conversation-header">
+            <div id="conversationAvatar" class="avatar avatar-large"></div>
+            <div class="conversation-title">
+              <strong id="conversationName">Conversation</strong>
+              <span id="conversationStatus">Offline</span>
+            </div>
+            <button id="groupInfoButton" class="header-link hidden">Members</button>
+          </header>
+
+          <div id="messageList" class="message-list"></div>
+
+          <div id="typingIndicator" class="typing-indicator"></div>
+
+          <form id="messageForm" class="message-composer">
+            <textarea id="messageInput" rows="1" maxlength="4000" placeholder="Write a message"></textarea>
+            <button class="send-button" type="submit">Send</button>
+          </form>
+        </section>
+      </main>
+
+      <aside id="groupPanel" class="details-panel hidden">
+        <div class="details-header">
+          <strong>Group members</strong>
+          <button id="closeGroupPanel" class="icon-button">×</button>
+        </div>
+        <div id="groupMembers"></div>
+      </aside>
+    </section>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
