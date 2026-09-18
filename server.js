@@ -59,6 +59,16 @@ function publicUser(user) {
   };
 }
 
+function decorateConversation(conversation, userId) {
+  if (conversation.type !== "private") return conversation;
+  const peerId = db.getConversationMemberIds(conversation.id).find(id => id !== userId);
+  const peer = peerId ? db.getUserById(peerId) : null;
+  return {
+    ...conversation,
+    peer: peer ? publicUser(peer) : null
+  };
+}
+
 function sendJson(ws, payload) {
   if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(payload));
 }
@@ -190,11 +200,15 @@ app.post("/api/chats/private", requireUser, (req, res) => {
   if (!target) return res.status(404).json({ error: "User not found." });
 
   const conversation = db.getOrCreatePrivateConversation(req.user.id, targetId);
-  res.status(201).json({ conversation });
+  res.status(201).json({ conversation: decorateConversation(conversation, req.user.id) });
 });
 
 app.get("/api/chats", requireUser, (req, res) => {
-  res.json({ conversations: db.listConversations(req.user.id) });
+  res.json({
+    conversations: db.listConversations(req.user.id).map(conversation =>
+      decorateConversation(conversation, req.user.id)
+    )
+  });
 });
 
 app.get("/api/chats/:conversationId/messages", requireUser, (req, res) => {
