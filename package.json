@@ -1,0 +1,19 @@
+{
+  "name": "slarte-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slarte real-time private and group chat backend.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.2.0",
+    "express": "^5.1.0",
+    "ws": "^8.18.3"
+  }
+}
