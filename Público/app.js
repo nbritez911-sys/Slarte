@@ -91,11 +91,16 @@ function renderConversations() {
     const meta = document.createElement("div");
     meta.className = "meta";
     const title = document.createElement("strong");
-    title.textContent = conversation.type === "group" ? (conversation.title || "Group") : "Private conversation";
+    title.textContent = conversation.type === "group"
+      ? (conversation.title || "Group")
+      : (conversation.peer?.name || "Private conversation");
     const preview = document.createElement("span");
-    preview.textContent = conversation.last_message || "No messages yet";
+    preview.textContent = conversation.last_message || (conversation.type === "private" && conversation.peer
+      ? `@${conversation.peer.username}`
+      : "No messages yet");
     meta.append(title, preview);
-    avatar.textContent = conversation.type === "group" ? "G" : "P";
+    if (conversation.type === "private" && conversation.peer) setAvatar(avatar, conversation.peer);
+    else avatar.textContent = "G";
     button.append(avatar, meta);
     button.addEventListener("click", () => openConversation(conversation));
     list.append(button);
@@ -117,18 +122,18 @@ async function openConversation(conversation) {
     $("conversationStatus").textContent = "Group conversation";
     $("conversationStatus").classList.remove("online");
   } else {
-    $("conversationName").textContent = "Private conversation";
-    $("conversationStatus").textContent = "Loading...";
+    const peer = conversation.peer;
+    $("conversationName").textContent = peer?.name || "Private conversation";
+    $("conversationStatus").textContent = peer
+      ? (peer.online ? "Online" : "Offline")
+      : "Offline";
+    $("conversationStatus").classList.toggle("online", Boolean(peer?.online));
+    setAvatar($("conversationAvatar"), peer);
   }
 
   const data = await api(`/api/chats/${conversation.id}/messages?limit=100`);
   state.messages = data.messages;
   renderMessages();
-
-  if (conversation.type === "private") {
-    const search = await api(`/api/users/search?q=${encodeURIComponent("")}`).catch(() => null);
-    void search;
-  }
 }
 
 function renderMessages() {
@@ -249,6 +254,7 @@ async function searchUsers(query) {
         $("userSearch").value = "";
         await loadConversations();
         const conversation = state.conversations.find(c => c.id === data.conversation.id) || data.conversation;
+        if (conversation.type === "private" && !conversation.peer) conversation.peer = user;
         await openConversation(conversation);
       });
       box.appendChild(button);
