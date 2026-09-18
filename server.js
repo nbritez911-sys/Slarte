@@ -14,6 +14,7 @@ const {
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
+app.use(express.static(require("path").join(__dirname, "Público")));
 
 const PORT = Number(process.env.PORT || 10000);
 const SESSION_COOKIE = "slarte_session";
